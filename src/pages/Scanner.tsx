@@ -17,12 +17,14 @@ import {
   BarChart3,
   History,
   X,
+  Hash,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { Html5Qrcode } from "html5-qrcode";
 import type { Doc } from "@/convex/_generated/dataModel";
+import CryptoJS from "crypto-js";
 
 export default function Scanner() {
   const { isLoading: authLoading, isAuthenticated } = useAuth();
@@ -32,6 +34,7 @@ export default function Scanner() {
   const [result, setResult] = useState<any>(null);
   const [showCamera, setShowCamera] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [hashedCode, setHashedCode] = useState<string>("");
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const scannerRef = useRef<HTMLDivElement>(null);
 
@@ -44,6 +47,16 @@ export default function Scanner() {
     api.medicines.getByCode,
     code.length >= 6 ? { code } : "skip"
   );
+
+  // Generate SHA-256 hash whenever code changes
+  useEffect(() => {
+    if (code.trim()) {
+      const hash = CryptoJS.SHA256(code).toString(CryptoJS.enc.Hex);
+      setHashedCode(hash);
+    } else {
+      setHashedCode("");
+    }
+  }, [code]);
 
   const handleSeedDatabase = async () => {
     try {
@@ -279,6 +292,19 @@ export default function Scanner() {
                       }
                     }}
                   />
+
+                  {/* SHA-256 Hash Display */}
+                  {hashedCode && (
+                    <div className="bg-[#FFE500] border-4 border-black p-4 shadow-[4px_4px_0px_#000000]">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Hash className="w-5 h-5" />
+                        <p className="font-black text-sm">SHA-256 HASH:</p>
+                      </div>
+                      <p className="font-mono text-xs break-all bg-white border-2 border-black p-2">
+                        {hashedCode}
+                      </p>
+                    </div>
+                  )}
                   
                   <div className="flex gap-3 flex-wrap">
                     <Button
