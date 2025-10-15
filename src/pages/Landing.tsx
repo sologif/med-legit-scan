@@ -50,7 +50,7 @@ export default function Landing() {
             <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab("home")}>
               <Shield className="w-10 h-10 text-white" />
               <span className="text-2xl md:text-3xl font-black text-white tracking-tight">
-                MEDIVERIFY
+                TRUEMEDIX
               </span>
             </div>
             
@@ -385,7 +385,7 @@ export default function Landing() {
       <footer className="bg-black border-t-4 border-black mt-12">
         <div className="max-w-7xl mx-auto px-4 py-8 text-center">
           <p className="text-white font-black text-lg">
-            © 2024 MEDIVERIFY - Fighting Counterfeit Medicines Worldwide
+            © 2024 TRUEMEDIX - Fighting Counterfeit Medicines Worldwide
           </p>
           <p className="text-white/80 font-bold mt-2">
             Powered by Blockchain Technology
