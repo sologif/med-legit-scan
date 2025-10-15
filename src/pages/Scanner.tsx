@@ -15,10 +15,12 @@ import {
   XCircle,
   BarChart3,
   History,
+  X,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
+import { Html5Qrcode } from "html5-qrcode";
 
 export default function Scanner() {
   const { isLoading: authLoading, isAuthenticated } = useAuth();
@@ -26,6 +28,10 @@ export default function Scanner() {
   const [code, setCode] = useState("");
   const [scanning, setScanning] = useState(false);
   const [result, setResult] = useState<any>(null);
+  const [showCamera, setShowCamera] = useState(false);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+  const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
+  const scannerRef = useRef<HTMLDivElement>(null);
 
   const stats = useQuery(api.medicines.getStats);
   const recentScans = useQuery(api.scans.recent, { limit: 10 });
@@ -35,8 +41,72 @@ export default function Scanner() {
     code.length >= 6 ? { code } : "skip"
   );
 
-  const handleScan = async () => {
-    if (!code.trim()) {
+  // Cleanup camera on unmount
+  useEffect(() => {
+    return () => {
+      if (html5QrCodeRef.current) {
+        html5QrCodeRef.current.stop().catch(() => {});
+      }
+    };
+  }, []);
+
+  const startCamera = async () => {
+    try {
+      setCameraError(null);
+      setShowCamera(true);
+      
+      // Wait for the DOM element to be available
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      if (!scannerRef.current) {
+        throw new Error("Scanner element not found");
+      }
+
+      const html5QrCode = new Html5Qrcode("qr-reader");
+      html5QrCodeRef.current = html5QrCode;
+
+      await html5QrCode.start(
+        { facingMode: "environment" },
+        {
+          fps: 10,
+          qrbox: { width: 250, height: 250 },
+        },
+        (decodedText) => {
+          // Successfully scanned
+          setCode(decodedText.toUpperCase());
+          stopCamera();
+          toast.success("QR Code scanned successfully!");
+          // Auto-verify after scanning
+          setTimeout(() => handleScan(decodedText.toUpperCase()), 500);
+        },
+        () => {
+          // Scan error (ignore, happens frequently)
+        }
+      );
+    } catch (err) {
+      console.error("Camera error:", err);
+      setCameraError("Unable to access camera. Please check permissions.");
+      setShowCamera(false);
+      toast.error("Camera access denied or unavailable");
+    }
+  };
+
+  const stopCamera = async () => {
+    try {
+      if (html5QrCodeRef.current) {
+        await html5QrCodeRef.current.stop();
+        html5QrCodeRef.current = null;
+      }
+    } catch (err) {
+      console.error("Error stopping camera:", err);
+    }
+    setShowCamera(false);
+  };
+
+  const handleScan = async (codeToScan?: string) => {
+    const scanCode = codeToScan || code;
+    
+    if (!scanCode.trim()) {
       toast.error("Please enter a medicine code");
       return;
     }
@@ -50,7 +120,7 @@ export default function Scanner() {
       if (medicine) {
         setResult(medicine);
         await createScan({
-          medicineCode: code,
+          medicineCode: scanCode,
           status: medicine.status,
           medicineName: medicine.name,
         });
@@ -67,7 +137,7 @@ export default function Scanner() {
       } else {
         setResult({ notFound: true });
         await createScan({
-          medicineCode: code,
+          medicineCode: scanCode,
           status: "not_found",
         });
         toast.error("Medicine not found in database");
@@ -176,7 +246,7 @@ export default function Scanner() {
                   
                   <div className="flex gap-3 flex-wrap">
                     <Button
-                      onClick={handleScan}
+                      onClick={() => handleScan()}
                       disabled={scanning || !code.trim()}
                       className="bg-[#00FF80] text-black border-4 border-black shadow-[4px_4px_0px_#000000] hover:shadow-[2px_2px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] font-black text-lg px-8 py-6 flex-1"
                     >
@@ -192,7 +262,44 @@ export default function Scanner() {
                         </>
                       )}
                     </Button>
+                    
+                    <Button
+                      onClick={showCamera ? stopCamera : startCamera}
+                      className="bg-[#FF0080] text-white border-4 border-black shadow-[4px_4px_0px_#000000] hover:shadow-[2px_2px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] font-black text-lg px-8 py-6"
+                    >
+                      {showCamera ? (
+                        <>
+                          <X className="w-5 h-5 mr-2" />
+                          CLOSE CAMERA
+                        </>
+                      ) : (
+                        <>
+                          <Camera className="w-5 h-5 mr-2" />
+                          SCAN QR
+                        </>
+                      )}
+                    </Button>
                   </div>
+
+                  {/* Camera Scanner */}
+                  {showCamera && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="bg-black border-4 border-black p-4 shadow-[4px_4px_0px_#000000]"
+                    >
+                      <div ref={scannerRef} id="qr-reader" className="w-full"></div>
+                      <p className="text-white font-bold text-center mt-4">
+                        Position QR code within the frame
+                      </p>
+                    </motion.div>
+                  )}
+
+                  {cameraError && (
+                    <div className="bg-red-100 border-4 border-black p-4">
+                      <p className="font-bold text-red-800">{cameraError}</p>
+                    </div>
+                  )}
 
                   {/* Quick Test Codes */}
                   <div className="pt-4 border-t-4 border-black">
