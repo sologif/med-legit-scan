@@ -385,7 +385,7 @@ export default function Landing() {
       <footer className="bg-black border-t-4 border-black mt-12">
         <div className="max-w-7xl mx-auto px-4 py-8 text-center">
           <p className="text-white font-black text-lg">
-            © 2024 TRUEMEDIX - Team Yashkriti @ Vibe clash
+            © {new Date().getFullYear()} TRUEMEDIX - Team Yashkriti @ Vibe clash
           </p>
           <p className="text-white/80 font-bold mt-2">
             Team: Nirmit Aggarwal, Anushka, Pragya Malasi, Pawan Singh
