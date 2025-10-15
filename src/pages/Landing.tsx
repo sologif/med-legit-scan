@@ -27,7 +27,7 @@ import { useState } from "react";
 export default function Landing() {
   const { isLoading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"home" | "features" | "b2b" | "demo" | "contact">("home");
+  const [activeTab, setActiveTab] = useState<"home" | "features" | "demo" | "contact">("home");
 
   if (isLoading) {
     return (
@@ -55,7 +55,7 @@ export default function Landing() {
             </div>
             
             <div className="flex gap-2 flex-wrap">
-              {["home", "features", "b2b", "demo", "contact"].map((tab) => (
+              {["home", "features", "demo", "contact"].map((tab) => (
                 <Button
                   key={tab}
                   onClick={() => setActiveTab(tab as any)}
@@ -214,93 +214,6 @@ export default function Landing() {
                   <ul className="space-y-2">
                     {feature.features.map((item, i) => (
                       <li key={i} className="flex items-center gap-2 font-bold">
-                        <CheckCircle className="w-5 h-5" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* B2B TAB */}
-      {activeTab === "b2b" && (
-        <div className="max-w-7xl mx-auto px-4 py-12">
-          <motion.h2
-            initial={{ x: -50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            className="text-5xl font-black mb-8 text-center"
-          >
-            B2B SOLUTIONS
-          </motion.h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              {
-                icon: Building2,
-                title: "FOR HOSPITALS",
-                features: [
-                  "Bulk inventory verification",
-                  "Patient safety dashboard",
-                  "Automated counterfeit alerts",
-                  "Compliance reporting",
-                  "HMS integration",
-                ],
-                color: "bg-[#F59E0B]",
-              },
-              {
-                icon: Store,
-                title: "FOR PHARMACIES",
-                features: [
-                  "Point-of-sale verification",
-                  "Stock management",
-                  "Expiry tracking",
-                  "Customer trust building",
-                  "Mobile scanning app",
-                ],
-                color: "bg-[#6366F1]",
-              },
-              {
-                icon: Truck,
-                title: "FOR DISTRIBUTORS",
-                features: [
-                  "Supply chain tracking",
-                  "Batch authentication",
-                  "Logistics optimization",
-                  "Real-time visibility",
-                  "Partner network",
-                ],
-                color: "bg-[#8B5CF6]",
-              },
-              {
-                icon: Users,
-                title: "ENTERPRISE PACKAGE",
-                features: [
-                  "Product registration portal",
-                  "Nationwide monitoring",
-                  "Counterfeit pattern detection",
-                  "Regulatory compliance",
-                  "White-label options",
-                  "Dedicated support & SLA",
-                ],
-                color: "bg-[#EC4899]",
-              },
-            ].map((solution, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ y: 50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: idx * 0.1 }}
-              >
-                <Card className={`${solution.color} border-4 border-black shadow-[8px_8px_0px_#000000] p-6 h-full`}>
-                  <solution.icon className="w-12 h-12 mb-4 text-white" />
-                  <h3 className="text-2xl font-black mb-4 text-white">{solution.title}</h3>
-                  <ul className="space-y-2">
-                    {solution.features.map((item, i) => (
-                      <li key={i} className="flex items-center gap-2 font-bold text-white">
                         <CheckCircle className="w-5 h-5" />
                         {item}
                       </li>

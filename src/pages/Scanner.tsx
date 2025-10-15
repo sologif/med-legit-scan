@@ -25,6 +25,7 @@ import { toast } from "sonner";
 import { Html5Qrcode } from "html5-qrcode";
 import type { Doc } from "@/convex/_generated/dataModel";
 import CryptoJS from "crypto-js";
+import { MedicineStats } from "@/components/MedicineStats";
 
 export default function Scanner() {
   const { isLoading: authLoading, isAuthenticated } = useAuth();
@@ -57,6 +58,14 @@ export default function Scanner() {
       setHashedCode("");
     }
   }, [code]);
+
+  // Redirect to auth if not authenticated
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      toast.error("Please sign in to use the scanner");
+      navigate("/auth");
+    }
+  }, [authLoading, isAuthenticated, navigate]);
 
   const handleSeedDatabase = async () => {
     try {
@@ -209,6 +218,11 @@ export default function Scanner() {
         <Loader2 className="w-12 h-12 animate-spin" />
       </div>
     );
+  }
+
+  // Don't render scanner if not authenticated
+  if (!isAuthenticated) {
+    return null;
   }
 
   return (
@@ -488,6 +502,9 @@ export default function Scanner() {
               </div>
             </div>
           </Card>
+
+          {/* D3.js Statistics Chart */}
+          <MedicineStats stats={stats} />
 
           {/* Recent Scans */}
           <Card className="bg-[#6B4EFF] border-4 border-black shadow-[8px_8px_0px_#000000] p-6">
