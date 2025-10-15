@@ -22,6 +22,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { Html5Qrcode } from "html5-qrcode";
+import type { Doc } from "@/convex/_generated/dataModel";
 
 export default function Scanner() {
   const { isLoading: authLoading, isAuthenticated } = useAuth();
@@ -36,6 +37,9 @@ export default function Scanner() {
 
   const createScan = useMutation(api.scans.create);
   const seedDatabase = useMutation(api.seedData.seed);
+  const stats = useQuery(api.medicines.getStats);
+  const recentScans = useQuery(api.scans.recent, { limit: 10 });
+
   const getMedicine = useQuery(
     api.medicines.getByCode,
     code.length >= 6 ? { code } : "skip"
@@ -467,7 +471,7 @@ export default function Scanner() {
             </h3>
             <div className="space-y-2 max-h-[400px] overflow-y-auto">
               {recentScans && recentScans.length > 0 ? (
-                recentScans.map((scan) => (
+                recentScans.map((scan: Doc<"scans">) => (
                   <div
                     key={scan._id}
                     className="bg-white border-4 border-black p-3 shadow-[4px_4px_0px_#000000]"
