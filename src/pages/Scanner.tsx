@@ -1,0 +1,340 @@
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { api } from "@/convex/_generated/api";
+import { useAuth } from "@/hooks/use-auth";
+import { motion } from "framer-motion";
+import { useMutation, useQuery } from "convex/react";
+import {
+  AlertTriangle,
+  Camera,
+  CheckCircle,
+  Clock,
+  Loader2,
+  Scan,
+  XCircle,
+  BarChart3,
+  History,
+} from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import { toast } from "sonner";
+
+export default function Scanner() {
+  const { isLoading: authLoading, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const [code, setCode] = useState("");
+  const [scanning, setScanning] = useState(false);
+  const [result, setResult] = useState<any>(null);
+
+  const stats = useQuery(api.medicines.getStats);
+  const recentScans = useQuery(api.scans.recent, { limit: 10 });
+  const createScan = useMutation(api.scans.create);
+  const getMedicine = useQuery(
+    api.medicines.getByCode,
+    code.length >= 6 ? { code } : "skip"
+  );
+
+  const handleScan = async () => {
+    if (!code.trim()) {
+      toast.error("Please enter a medicine code");
+      return;
+    }
+
+    setScanning(true);
+    
+    // Simulate scanning delay
+    setTimeout(async () => {
+      const medicine = getMedicine;
+      
+      if (medicine) {
+        setResult(medicine);
+        await createScan({
+          medicineCode: code,
+          status: medicine.status,
+          medicineName: medicine.name,
+        });
+        
+        if (medicine.status === "legal") {
+          toast.success("Medicine verified as LEGAL");
+        } else if (medicine.status === "expired") {
+          toast.error("Medicine is EXPIRED");
+        } else if (medicine.status === "counterfeit") {
+          toast.error("COUNTERFEIT DETECTED!");
+        } else if (medicine.status === "recalled") {
+          toast.error("Medicine has been RECALLED");
+        }
+      } else {
+        setResult({ notFound: true });
+        await createScan({
+          medicineCode: code,
+          status: "not_found",
+        });
+        toast.error("Medicine not found in database");
+      }
+      
+      setScanning(false);
+    }, 1500);
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "legal":
+        return "bg-[#00FF80] text-black";
+      case "expired":
+        return "bg-[#FFD700] text-black";
+      case "counterfeit":
+        return "bg-[#FF0080] text-white";
+      case "recalled":
+        return "bg-[#FF6B00] text-white";
+      default:
+        return "bg-gray-400 text-black";
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "legal":
+        return <CheckCircle className="w-12 h-12" />;
+      case "expired":
+        return <Clock className="w-12 h-12" />;
+      case "counterfeit":
+        return <XCircle className="w-12 h-12" />;
+      case "recalled":
+        return <AlertTriangle className="w-12 h-12" />;
+      default:
+        return <XCircle className="w-12 h-12" />;
+    }
+  };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#FFD700]">
+        <Loader2 className="w-12 h-12 animate-spin" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#FFD700] p-4 md:p-8" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+      {/* Header */}
+      <motion.div
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="max-w-7xl mx-auto mb-8"
+      >
+        <div className="bg-[#FF0080] border-4 border-black p-6 shadow-[8px_8px_0px_#000000]">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex items-center gap-4">
+              <Scan className="w-12 h-12 text-white" />
+              <div>
+                <h1 className="text-4xl font-black text-white tracking-tight">
+                  MEDICINE SCANNER
+                </h1>
+                <p className="text-white/90 font-bold">Verify authenticity instantly</p>
+              </div>
+            </div>
+            <Button
+              onClick={() => navigate("/")}
+              className="bg-white text-black border-4 border-black shadow-[4px_4px_0px_#000000] hover:shadow-[2px_2px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] font-black text-lg px-6 py-6"
+            >
+              ← BACK
+            </Button>
+          </div>
+        </div>
+      </motion.div>
+
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Scanner */}
+        <motion.div
+          initial={{ x: -50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="lg:col-span-2"
+        >
+          <Card className="bg-[#0080FF] border-4 border-black shadow-[8px_8px_0px_#000000] p-6">
+            <div className="space-y-6">
+              {/* Scanner Input */}
+              <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_#000000]">
+                <h2 className="text-2xl font-black mb-4 flex items-center gap-2">
+                  <Camera className="w-6 h-6" />
+                  SCAN MEDICINE
+                </h2>
+                
+                <div className="space-y-4">
+                  <Input
+                    value={code}
+                    onChange={(e) => setCode(e.target.value.toUpperCase())}
+                    placeholder="Enter medicine code (e.g., MED001234)"
+                    className="border-4 border-black text-xl font-bold p-6 shadow-[4px_4px_0px_#000000]"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !scanning) {
+                        handleScan();
+                      }
+                    }}
+                  />
+                  
+                  <div className="flex gap-3 flex-wrap">
+                    <Button
+                      onClick={handleScan}
+                      disabled={scanning || !code.trim()}
+                      className="bg-[#00FF80] text-black border-4 border-black shadow-[4px_4px_0px_#000000] hover:shadow-[2px_2px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] font-black text-lg px-8 py-6 flex-1"
+                    >
+                      {scanning ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                          SCANNING...
+                        </>
+                      ) : (
+                        <>
+                          <Scan className="w-5 h-5 mr-2" />
+                          VERIFY NOW
+                        </>
+                      )}
+                    </Button>
+                  </div>
+
+                  {/* Quick Test Codes */}
+                  <div className="pt-4 border-t-4 border-black">
+                    <p className="font-black mb-2">QUICK TEST:</p>
+                    <div className="flex gap-2 flex-wrap">
+                      {["MED001234", "MED005678", "MED009999"].map((testCode) => (
+                        <Button
+                          key={testCode}
+                          onClick={() => setCode(testCode)}
+                          variant="outline"
+                          className="border-4 border-black shadow-[4px_4px_0px_#000000] hover:shadow-[2px_2px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] font-bold"
+                        >
+                          {testCode}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Result Display */}
+              {result && (
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className={`${result.notFound ? "bg-gray-400" : getStatusColor(result.status)} border-4 border-black p-6 shadow-[8px_8px_0px_#000000]`}
+                >
+                  {result.notFound ? (
+                    <div className="text-center">
+                      <XCircle className="w-16 h-16 mx-auto mb-4" />
+                      <h3 className="text-3xl font-black mb-2">NOT FOUND</h3>
+                      <p className="font-bold">Medicine code not in database</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <div className="flex items-center gap-4 mb-6">
+                        {getStatusIcon(result.status)}
+                        <div>
+                          <h3 className="text-3xl font-black uppercase">{result.status}</h3>
+                          <p className="font-bold text-lg">{result.name}</p>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white/20 border-4 border-black p-4">
+                        <div>
+                          <p className="font-black text-sm">MANUFACTURER:</p>
+                          <p className="font-bold">{result.manufacturer}</p>
+                        </div>
+                        <div>
+                          <p className="font-black text-sm">BATCH NO:</p>
+                          <p className="font-bold">{result.batchNo}</p>
+                        </div>
+                        <div>
+                          <p className="font-black text-sm">MFG DATE:</p>
+                          <p className="font-bold">{result.mfgDate}</p>
+                        </div>
+                        <div>
+                          <p className="font-black text-sm">EXP DATE:</p>
+                          <p className="font-bold">{result.expDate}</p>
+                        </div>
+                        <div>
+                          <p className="font-black text-sm">LICENSE:</p>
+                          <p className="font-bold">{result.licenseNo}</p>
+                        </div>
+                        <div>
+                          <p className="font-black text-sm">COUNTRY:</p>
+                          <p className="font-bold">{result.country}</p>
+                        </div>
+                      </div>
+
+                      {result.warnings && result.warnings.length > 0 && (
+                        <div className="mt-4 bg-black text-white border-4 border-white p-4">
+                          <p className="font-black mb-2">⚠️ WARNINGS:</p>
+                          {result.warnings.map((warning: string, idx: number) => (
+                            <p key={idx} className="font-bold">• {warning}</p>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </div>
+          </Card>
+        </motion.div>
+
+        {/* Sidebar */}
+        <motion.div
+          initial={{ x: 50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="space-y-6"
+        >
+          {/* Stats */}
+          <Card className="bg-[#00FF80] border-4 border-black shadow-[8px_8px_0px_#000000] p-6">
+            <h3 className="text-2xl font-black mb-4 flex items-center gap-2">
+              <BarChart3 className="w-6 h-6" />
+              STATS
+            </h3>
+            <div className="space-y-3">
+              <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_#000000]">
+                <p className="font-black text-sm">TOTAL MEDICINES</p>
+                <p className="text-3xl font-black">{stats?.totalMedicines || 0}</p>
+              </div>
+              <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_#000000]">
+                <p className="font-black text-sm">TOTAL SCANS</p>
+                <p className="text-3xl font-black">{stats?.totalScans || 0}</p>
+              </div>
+              <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_#000000]">
+                <p className="font-black text-sm">LEGAL PRODUCTS</p>
+                <p className="text-3xl font-black">{stats?.legalProducts || 0}</p>
+              </div>
+            </div>
+          </Card>
+
+          {/* Recent Scans */}
+          <Card className="bg-[#FF0080] border-4 border-black shadow-[8px_8px_0px_#000000] p-6">
+            <h3 className="text-2xl font-black mb-4 flex items-center gap-2 text-white">
+              <History className="w-6 h-6" />
+              RECENT SCANS
+            </h3>
+            <div className="space-y-2 max-h-[400px] overflow-y-auto">
+              {recentScans && recentScans.length > 0 ? (
+                recentScans.map((scan) => (
+                  <div
+                    key={scan._id}
+                    className="bg-white border-4 border-black p-3 shadow-[4px_4px_0px_#000000]"
+                  >
+                    <p className="font-black text-sm">{scan.medicineCode}</p>
+                    <p className="font-bold text-xs text-gray-600">
+                      {scan.medicineName || "Unknown"}
+                    </p>
+                    <p className="font-bold text-xs uppercase mt-1">{scan.status}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-white font-bold text-center py-4">No scans yet</p>
+              )}
+            </div>
+          </Card>
+        </motion.div>
+      </div>
+    </div>
+  );
+}

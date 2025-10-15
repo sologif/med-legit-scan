@@ -32,12 +32,31 @@ const schema = defineSchema(
       role: v.optional(roleValidator), // role of the user. do not remove
     }).index("email", ["email"]), // index for the email. do not remove or modify
 
-    // add other tables here
+    medicines: defineTable({
+      code: v.string(),
+      name: v.string(),
+      manufacturer: v.string(),
+      batchNo: v.string(),
+      mfgDate: v.string(),
+      expDate: v.string(),
+      licenseNo: v.string(),
+      status: v.union(
+        v.literal("legal"),
+        v.literal("expired"),
+        v.literal("counterfeit"),
+        v.literal("recalled")
+      ),
+      country: v.string(),
+      composition: v.string(),
+      warnings: v.array(v.string()),
+    }).index("by_code", ["code"]),
 
-    // tableName: defineTable({
-    //   ...
-    //   // table fields
-    // }).index("by_field", ["field"])
+    scans: defineTable({
+      medicineCode: v.string(),
+      status: v.string(),
+      medicineName: v.optional(v.string()),
+      timestamp: v.number(),
+    }).index("by_timestamp", ["timestamp"]),
   },
   {
     schemaValidation: false,
