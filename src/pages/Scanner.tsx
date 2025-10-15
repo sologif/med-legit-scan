@@ -186,14 +186,14 @@ export default function Scanner() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFD700] p-4 md:p-8" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+    <div className="min-h-screen bg-[#00FFD1] p-4 md:p-8" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
       {/* Header */}
       <motion.div
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         className="max-w-7xl mx-auto mb-8"
       >
-        <div className="bg-[#FF0080] border-4 border-black p-6 shadow-[8px_8px_0px_#000000]">
+        <div className="bg-[#6B4EFF] border-4 border-black p-6 shadow-[8px_8px_0px_#000000]">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
               <Scan className="w-12 h-12 text-white" />
@@ -222,7 +222,7 @@ export default function Scanner() {
           transition={{ delay: 0.1 }}
           className="lg:col-span-2"
         >
-          <Card className="bg-[#0080FF] border-4 border-black shadow-[8px_8px_0px_#000000] p-6">
+          <Card className="bg-[#FF3366] border-4 border-black shadow-[8px_8px_0px_#000000] p-6">
             <div className="space-y-6">
               {/* Scanner Input */}
               <div className="bg-white border-4 border-black p-6 shadow-[4px_4px_0px_#000000]">
@@ -248,7 +248,7 @@ export default function Scanner() {
                     <Button
                       onClick={() => handleScan()}
                       disabled={scanning || !code.trim()}
-                      className="bg-[#00FF80] text-black border-4 border-black shadow-[4px_4px_0px_#000000] hover:shadow-[2px_2px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] font-black text-lg px-8 py-6 flex-1"
+                      className="bg-[#FFE500] text-black border-4 border-black shadow-[4px_4px_0px_#000000] hover:shadow-[2px_2px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] font-black text-lg px-8 py-6 flex-1"
                     >
                       {scanning ? (
                         <>
@@ -265,7 +265,7 @@ export default function Scanner() {
                     
                     <Button
                       onClick={showCamera ? stopCamera : startCamera}
-                      className="bg-[#FF0080] text-white border-4 border-black shadow-[4px_4px_0px_#000000] hover:shadow-[2px_2px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] font-black text-lg px-8 py-6"
+                      className="bg-[#6B4EFF] text-white border-4 border-black shadow-[4px_4px_0px_#000000] hover:shadow-[2px_2px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] font-black text-lg px-8 py-6"
                     >
                       {showCamera ? (
                         <>
@@ -394,7 +394,7 @@ export default function Scanner() {
           className="space-y-6"
         >
           {/* Stats */}
-          <Card className="bg-[#00FF80] border-4 border-black shadow-[8px_8px_0px_#000000] p-6">
+          <Card className="bg-[#FFE500] border-4 border-black shadow-[8px_8px_0px_#000000] p-6">
             <h3 className="text-2xl font-black mb-4 flex items-center gap-2">
               <BarChart3 className="w-6 h-6" />
               STATS
@@ -416,7 +416,7 @@ export default function Scanner() {
           </Card>
 
           {/* Recent Scans */}
-          <Card className="bg-[#FF0080] border-4 border-black shadow-[8px_8px_0px_#000000] p-6">
+          <Card className="bg-[#6B4EFF] border-4 border-black shadow-[8px_8px_0px_#000000] p-6">
             <h3 className="text-2xl font-black mb-4 flex items-center gap-2 text-white">
               <History className="w-6 h-6" />
               RECENT SCANS

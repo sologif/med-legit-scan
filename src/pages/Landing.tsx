@@ -38,12 +38,12 @@ export default function Landing() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFD700]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+    <div className="min-h-screen bg-[#A7F3D0]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
       {/* Navigation */}
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className="bg-[#FF0080] border-b-4 border-black sticky top-0 z-50"
+        className="bg-[#8B5CF6] border-b-4 border-black sticky top-0 z-50"
       >
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between flex-wrap gap-4">
@@ -62,7 +62,7 @@ export default function Landing() {
                   className={`${
                     activeTab === tab
                       ? "bg-white text-black"
-                      : "bg-[#0080FF] text-white"
+                      : "bg-[#10B981] text-white"
                   } border-4 border-black shadow-[4px_4px_0px_#000000] hover:shadow-[2px_2px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] font-black uppercase`}
                 >
                   {tab}
@@ -80,7 +80,7 @@ export default function Landing() {
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-[#0080FF] border-4 border-black shadow-[12px_12px_0px_#000000] p-8 md:p-12 mb-12 text-center"
+            className="bg-[#8B5CF6] border-4 border-black shadow-[12px_12px_0px_#000000] p-8 md:p-12 mb-12 text-center"
           >
             <h1 className="text-5xl md:text-7xl font-black text-white mb-6 leading-tight">
               FIGHT FAKE<br />MEDICINES
@@ -91,7 +91,7 @@ export default function Landing() {
             <div className="flex gap-4 justify-center flex-wrap">
               <Button
                 onClick={() => navigate("/scanner")}
-                className="bg-[#00FF80] text-black border-4 border-black shadow-[8px_8px_0px_#000000] hover:shadow-[4px_4px_0px_#000000] hover:translate-x-[4px] hover:translate-y-[4px] font-black text-xl px-8 py-8"
+                className="bg-[#10B981] text-white border-4 border-black shadow-[8px_8px_0px_#000000] hover:shadow-[4px_4px_0px_#000000] hover:translate-x-[4px] hover:translate-y-[4px] font-black text-xl px-8 py-8"
               >
                 <Scan className="w-6 h-6 mr-2" />
                 START SCANNING
@@ -110,9 +110,9 @@ export default function Landing() {
           {/* Value Props */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             {[
-              { icon: Shield, title: "PATIENT SAFETY", desc: "Verify authenticity instantly", color: "bg-[#0080FF]" },
-              { icon: Lock, title: "BLOCKCHAIN SECURE", desc: "Tamper-proof records", color: "bg-[#00FF80]" },
-              { icon: TrendingUp, title: "SUPPLY CHAIN", desc: "End-to-end visibility", color: "bg-[#FF0080]" },
+              { icon: Shield, title: "PATIENT SAFETY", desc: "Verify authenticity instantly", color: "bg-[#8B5CF6]" },
+              { icon: Lock, title: "BLOCKCHAIN SECURE", desc: "Tamper-proof records", color: "bg-[#10B981]" },
+              { icon: TrendingUp, title: "SUPPLY CHAIN", desc: "End-to-end visibility", color: "bg-[#F59E0B]" },
             ].map((item, idx) => (
               <motion.div
                 key={idx}
@@ -143,7 +143,7 @@ export default function Landing() {
                 { num: "24/7", label: "SUPPORT" },
               ].map((stat, idx) => (
                 <div key={idx} className="text-center">
-                  <p className="text-4xl md:text-5xl font-black text-[#FF0080]">{stat.num}</p>
+                  <p className="text-4xl md:text-5xl font-black text-[#8B5CF6]">{stat.num}</p>
                   <p className="font-black text-sm mt-2">{stat.label}</p>
                 </div>
               ))}
@@ -169,37 +169,37 @@ export default function Landing() {
                 icon: Scan,
                 title: "QR & BARCODE SCANNING",
                 features: ["Multi-format support", "Offline capability", "Real-time results"],
-                color: "bg-[#0080FF]",
+                color: "bg-[#8B5CF6]",
               },
               {
                 icon: Lock,
                 title: "BLOCKCHAIN DATABASE",
                 features: ["Tamper-proof records", "Complete traceability", "Audit trail"],
-                color: "bg-[#00FF80]",
+                color: "bg-[#10B981]",
               },
               {
                 icon: Bell,
                 title: "REAL-TIME ALERTS",
                 features: ["Push notifications", "Email alerts", "SMS updates"],
-                color: "bg-[#FF0080]",
+                color: "bg-[#F59E0B]",
               },
               {
                 icon: BarChart3,
                 title: "ANALYTICS DASHBOARD",
                 features: ["Visual reports", "Predictive analytics", "Export capabilities"],
-                color: "bg-[#FFD700]",
+                color: "bg-[#EC4899]",
               },
               {
                 icon: Smartphone,
                 title: "MOBILE APPS",
                 features: ["iOS & Android", "User-friendly", "Offline mode"],
-                color: "bg-[#FF6B00]",
+                color: "bg-[#06B6D4]",
               },
               {
                 icon: TrendingUp,
                 title: "API INTEGRATION",
                 features: ["RESTful API", "Webhooks", "Documentation"],
-                color: "bg-[#9D00FF]",
+                color: "bg-[#6366F1]",
               },
             ].map((feature, idx) => (
               <motion.div
@@ -249,7 +249,7 @@ export default function Landing() {
                   "Compliance reporting",
                   "HMS integration",
                 ],
-                color: "bg-[#FF6B00]",
+                color: "bg-[#F59E0B]",
               },
               {
                 icon: Store,
@@ -261,7 +261,7 @@ export default function Landing() {
                   "Customer trust building",
                   "Mobile scanning app",
                 ],
-                color: "bg-[#9D00FF]",
+                color: "bg-[#6366F1]",
               },
               {
                 icon: Truck,
@@ -273,7 +273,7 @@ export default function Landing() {
                   "Real-time visibility",
                   "Partner network",
                 ],
-                color: "bg-[#0080FF]",
+                color: "bg-[#8B5CF6]",
               },
               {
                 icon: Users,
@@ -286,7 +286,7 @@ export default function Landing() {
                   "White-label options",
                   "Dedicated support & SLA",
                 ],
-                color: "bg-[#FF0080]",
+                color: "bg-[#EC4899]",
               },
             ].map((solution, idx) => (
               <motion.div
@@ -319,7 +319,7 @@ export default function Landing() {
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-[#0080FF] border-4 border-black shadow-[12px_12px_0px_#000000] p-8 text-center"
+            className="bg-[#8B5CF6] border-4 border-black shadow-[12px_12px_0px_#000000] p-8 text-center"
           >
             <h2 className="text-5xl font-black text-white mb-6">LIVE DEMO</h2>
             <p className="text-xl font-bold text-white mb-8">
@@ -327,7 +327,7 @@ export default function Landing() {
             </p>
             <Button
               onClick={() => navigate("/scanner")}
-              className="bg-[#00FF80] text-black border-4 border-black shadow-[8px_8px_0px_#000000] hover:shadow-[4px_4px_0px_#000000] hover:translate-x-[4px] hover:translate-y-[4px] font-black text-2xl px-12 py-8"
+              className="bg-[#10B981] text-white border-4 border-black shadow-[8px_8px_0px_#000000] hover:shadow-[4px_4px_0px_#000000] hover:translate-x-[4px] hover:translate-y-[4px] font-black text-2xl px-12 py-8"
             >
               <Scan className="w-8 h-8 mr-3" />
               LAUNCH SCANNER
@@ -360,9 +360,9 @@ export default function Landing() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { icon: Mail, label: "EMAIL", value: "contact@mediverify.com", color: "bg-[#0080FF]" },
-              { icon: Phone, label: "PHONE", value: "+1 (555) 123-4567", color: "bg-[#00FF80]" },
-              { icon: MapPin, label: "LOCATION", value: "San Francisco, CA", color: "bg-[#FF0080]" },
+              { icon: Mail, label: "EMAIL", value: "contact@mediverify.com", color: "bg-[#8B5CF6]" },
+              { icon: Phone, label: "PHONE", value: "+1 (555) 123-4567", color: "bg-[#10B981]" },
+              { icon: MapPin, label: "LOCATION", value: "San Francisco, CA", color: "bg-[#F59E0B]" },
             ].map((contact, idx) => (
               <motion.div
                 key={idx}
