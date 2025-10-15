@@ -1,6 +1,6 @@
-import { internalMutation } from "./_generated/server";
+import { mutation } from "./_generated/server";
 
-export const seed = internalMutation({
+export const seed = mutation({
   args: {},
   handler: async (ctx) => {
     // Check if data already exists

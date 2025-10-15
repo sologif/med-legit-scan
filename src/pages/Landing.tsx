@@ -360,9 +360,9 @@ export default function Landing() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { icon: Mail, label: "EMAIL", value: "contact@mediverify.com", color: "bg-[#8B5CF6]" },
-              { icon: Phone, label: "PHONE", value: "+1 (555) 123-4567", color: "bg-[#10B981]" },
-              { icon: MapPin, label: "LOCATION", value: "San Francisco, CA", color: "bg-[#F59E0B]" },
+              { icon: Mail, label: "EMAIL", value: "nirmitjee@gmail.com", color: "bg-[#8B5CF6]" },
+              { icon: Phone, label: "PHONE", value: "9891168827", color: "bg-[#10B981]" },
+              { icon: MapPin, label: "LOCATION", value: "Vibe clash", color: "bg-[#F59E0B]" },
             ].map((contact, idx) => (
               <motion.div
                 key={idx}
@@ -385,10 +385,10 @@ export default function Landing() {
       <footer className="bg-black border-t-4 border-black mt-12">
         <div className="max-w-7xl mx-auto px-4 py-8 text-center">
           <p className="text-white font-black text-lg">
-            © 2024 TRUEMEDIX - Fighting Counterfeit Medicines Worldwide
+            © 2024 TRUEMEDIX - Team Yashkriti @ Vibe clash
           </p>
           <p className="text-white/80 font-bold mt-2">
-            Powered by Blockchain Technology
+            Team: Nirmit Aggarwal, Anushka, Pragya Malasi, Pawan Singh
           </p>
         </div>
       </footer>

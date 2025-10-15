@@ -5,6 +5,7 @@ import { api } from "@/convex/_generated/api";
 import { useAuth } from "@/hooks/use-auth";
 import { motion } from "framer-motion";
 import { useMutation, useQuery } from "convex/react";
+import { internal } from "@/convex/_generated/api";
 import {
   AlertTriangle,
   Camera,
@@ -33,13 +34,21 @@ export default function Scanner() {
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const scannerRef = useRef<HTMLDivElement>(null);
 
-  const stats = useQuery(api.medicines.getStats);
-  const recentScans = useQuery(api.scans.recent, { limit: 10 });
   const createScan = useMutation(api.scans.create);
+  const seedDatabase = useMutation(api.seedData.seed);
   const getMedicine = useQuery(
     api.medicines.getByCode,
     code.length >= 6 ? { code } : "skip"
   );
+
+  const handleSeedDatabase = async () => {
+    try {
+      const result = await seedDatabase({});
+      toast.success(result.message || "Database seeded successfully!");
+    } catch (error) {
+      toast.error("Failed to seed database: " + (error instanceof Error ? error.message : "Unknown error"));
+    }
+  };
 
   // Cleanup camera on unmount
   useEffect(() => {
@@ -214,6 +223,29 @@ export default function Scanner() {
         </div>
       </motion.div>
 
+      {/* Empty DB notice for deployed environments */}
+      {stats && stats.totalMedicines === 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-7xl mx-auto mb-6"
+        >
+          <div className="bg-[#FFE500] border-4 border-black p-4 shadow-[8px_8px_0px_#000000] flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <AlertTriangle className="w-6 h-6" />
+              <p className="font-black">No sample data found for this environment.</p>
+            </div>
+            <Button
+              onClick={handleSeedDatabase}
+              variant="outline"
+              className="border-4 border-black shadow-[4px_4px_0px_#000000] font-black bg-white"
+            >
+              Initialize Sample Data
+            </Button>
+          </div>
+        </motion.div>
+      )}
+
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Scanner */}
         <motion.div
@@ -315,6 +347,18 @@ export default function Scanner() {
                           {testCode}
                         </Button>
                       ))}
+                    </div>
+                    
+                    {/* Seed Database Button */}
+                    <div className="mt-4 pt-4 border-t-4 border-black">
+                      <p className="font-black mb-2 text-sm">FIRST TIME SETUP:</p>
+                      <Button
+                        onClick={handleSeedDatabase}
+                        variant="outline"
+                        className="w-full border-4 border-black shadow-[4px_4px_0px_#000000] hover:shadow-[2px_2px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] font-bold bg-[#FFE500]"
+                      >
+                        Initialize Sample Data
+                      </Button>
                     </div>
                   </div>
                 </div>
