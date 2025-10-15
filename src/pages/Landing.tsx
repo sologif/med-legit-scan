@@ -20,14 +20,22 @@ import {
   Mail,
   Phone,
   MapPin,
+  Package,
+  Activity,
+  Globe,
+  Target,
 } from "lucide-react";
+import { useEffect, useRef } from "react";
+import * as d3 from "d3";
 import { useNavigate } from "react-router";
 import { useState } from "react";
+import { VerificationTrendsChart } from "@/components/VerificationTrendsChart";
+import { MarketReachChart } from "@/components/MarketReachChart";
 
 export default function Landing() {
   const { isLoading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"home" | "features" | "demo" | "contact">("home");
+  const [activeTab, setActiveTab] = useState<"home" | "features" | "demo" | "contact" | "b2b">("home");
 
   if (isLoading) {
     return (
@@ -55,7 +63,7 @@ export default function Landing() {
             </div>
             
             <div className="flex gap-2 flex-wrap">
-              {["home", "features", "demo", "contact"].map((tab) => (
+              {["home", "features", "demo", "b2b", "contact"].map((tab) => (
                 <Button
                   key={tab}
                   onClick={() => setActiveTab(tab as any)}
@@ -255,6 +263,224 @@ export default function Landing() {
                 <p className="font-bold">⚠️ MED002468 - Recalled product</p>
                 <p className="font-bold">✅ MED003579 - Legal medicine</p>
               </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* B2B TAB */}
+      {activeTab === "b2b" && (
+        <div className="max-w-7xl mx-auto px-4 py-12">
+          <motion.h2
+            initial={{ x: -50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            className="text-5xl font-black mb-4 text-center"
+          >
+            ENTERPRISE SOLUTIONS
+          </motion.h2>
+          <p className="text-center text-xl font-bold mb-12">
+            Bulk verification, supply chain tracking, and market analytics for pharmaceutical businesses
+          </p>
+
+          {/* Key B2B Features */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            {[
+              { icon: Building2, title: "HOSPITALS", desc: "Bulk verification for patient safety", color: "bg-[#8B5CF6]" },
+              { icon: Store, title: "PHARMACIES", desc: "Real-time inventory tracking", color: "bg-[#10B981]" },
+              { icon: Package, title: "PHARMA COMPANIES", desc: "Product reach analytics", color: "bg-[#F59E0B]" },
+              { icon: Truck, title: "DISTRIBUTORS", desc: "Supply chain visibility", color: "bg-[#EC4899]" },
+            ].map((item, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ y: 50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: idx * 0.1 }}
+              >
+                <Card className={`${item.color} border-4 border-black shadow-[8px_8px_0px_#000000] p-6 text-center h-full`}>
+                  <item.icon className="w-12 h-12 mx-auto mb-4 text-white" />
+                  <h3 className="text-xl font-black text-white mb-2">{item.title}</h3>
+                  <p className="font-bold text-white">{item.desc}</p>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Market Statistics */}
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-[#8B5CF6] border-4 border-black shadow-[12px_12px_0px_#000000] p-8 mb-12"
+          >
+            <h3 className="text-3xl font-black text-white mb-6 text-center">MARKET IMPACT</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {[
+                { num: "2.5M+", label: "DAILY VERIFICATIONS" },
+                { num: "850+", label: "ENTERPRISE CLIENTS" },
+                { num: "99.8%", label: "COUNTERFEIT DETECTION" },
+                { num: "45%", label: "SUPPLY CHAIN EFFICIENCY" },
+              ].map((stat, idx) => (
+                <div key={idx} className="bg-white border-4 border-black p-4 text-center shadow-[4px_4px_0px_#000000]">
+                  <p className="text-4xl font-black text-[#8B5CF6]">{stat.num}</p>
+                  <p className="font-black text-sm mt-2">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Analytics for Pharma Companies */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+            <motion.div
+              initial={{ x: -50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              <Card className="bg-[#10B981] border-4 border-black shadow-[8px_8px_0px_#000000] p-6">
+                <h3 className="text-2xl font-black text-white mb-4 flex items-center gap-2">
+                  <Activity className="w-6 h-6" />
+                  PRODUCT VERIFICATION ANALYTICS
+                </h3>
+                <div className="bg-white border-4 border-black p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold">Track verification frequency</span>
+                    <CheckCircle className="w-5 h-5 text-[#10B981]" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold">Monitor product reach</span>
+                    <CheckCircle className="w-5 h-5 text-[#10B981]" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold">Geographic distribution data</span>
+                    <CheckCircle className="w-5 h-5 text-[#10B981]" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold">Real-time market insights</span>
+                    <CheckCircle className="w-5 h-5 text-[#10B981]" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold">Counterfeit detection alerts</span>
+                    <CheckCircle className="w-5 h-5 text-[#10B981]" />
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ x: 50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Card className="bg-[#F59E0B] border-4 border-black shadow-[8px_8px_0px_#000000] p-6">
+                <h3 className="text-2xl font-black text-white mb-4 flex items-center gap-2">
+                  <Globe className="w-6 h-6" />
+                  SUPPLY CHAIN TRACKING
+                </h3>
+                <div className="bg-white border-4 border-black p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold">End-to-end visibility</span>
+                    <CheckCircle className="w-5 h-5 text-[#F59E0B]" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold">Distribution network mapping</span>
+                    <CheckCircle className="w-5 h-5 text-[#F59E0B]" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold">Inventory optimization</span>
+                    <CheckCircle className="w-5 h-5 text-[#F59E0B]" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold">Delivery time analytics</span>
+                    <CheckCircle className="w-5 h-5 text-[#F59E0B]" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold">Temperature monitoring</span>
+                    <CheckCircle className="w-5 h-5 text-[#F59E0B]" />
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+          </div>
+
+          {/* Verification Trends Chart */}
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="bg-white border-4 border-black shadow-[8px_8px_0px_#000000] p-6 mb-12"
+          >
+            <h3 className="text-2xl font-black mb-4 text-center">VERIFICATION TRENDS (LAST 6 MONTHS)</h3>
+            <VerificationTrendsChart />
+          </motion.div>
+
+          {/* Market Reach Chart */}
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="bg-white border-4 border-black shadow-[8px_8px_0px_#000000] p-6 mb-12"
+          >
+            <h3 className="text-2xl font-black mb-4 text-center">PRODUCT REACH BY REGION</h3>
+            <MarketReachChart />
+          </motion.div>
+
+          {/* Pricing Tiers */}
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.6 }}
+          >
+            <h3 className="text-3xl font-black mb-8 text-center">ENTERPRISE PRICING</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                {
+                  name: "STARTER",
+                  price: "$499",
+                  period: "/month",
+                  features: ["Up to 10K verifications/month", "Basic analytics", "Email support", "API access"],
+                  color: "bg-[#8B5CF6]",
+                },
+                {
+                  name: "PROFESSIONAL",
+                  price: "$1,499",
+                  period: "/month",
+                  features: ["Up to 100K verifications/month", "Advanced analytics", "Priority support", "Custom integrations", "Supply chain tracking"],
+                  color: "bg-[#10B981]",
+                  popular: true,
+                },
+                {
+                  name: "ENTERPRISE",
+                  price: "Custom",
+                  period: "",
+                  features: ["Unlimited verifications", "Full analytics suite", "24/7 dedicated support", "White-label solution", "Custom development"],
+                  color: "bg-[#F59E0B]",
+                },
+              ].map((tier, idx) => (
+                <Card
+                  key={idx}
+                  className={`${tier.color} border-4 border-black shadow-[8px_8px_0px_#000000] p-6 relative`}
+                >
+                  {tier.popular && (
+                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#EC4899] border-4 border-black px-4 py-1 shadow-[4px_4px_0px_#000000]">
+                      <span className="font-black text-white text-sm">MOST POPULAR</span>
+                    </div>
+                  )}
+                  <h4 className="text-2xl font-black text-white mb-2">{tier.name}</h4>
+                  <div className="mb-4">
+                    <span className="text-4xl font-black text-white">{tier.price}</span>
+                    <span className="text-white font-bold">{tier.period}</span>
+                  </div>
+                  <div className="bg-white border-4 border-black p-4 space-y-2">
+                    {tier.features.map((feature, i) => (
+                      <div key={i} className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                        <span className="font-bold text-sm">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <Button className="w-full mt-4 bg-black text-white border-4 border-black shadow-[4px_4px_0px_#000000] hover:shadow-[2px_2px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] font-black">
+                    GET STARTED
+                  </Button>
+                </Card>
+              ))}
             </div>
           </motion.div>
         </div>
